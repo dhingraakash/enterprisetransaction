@@ -1,4 +1,4 @@
-package com.enterprisetransaction.aspect;
+package com.enterprisetransaction.anotations;
 
 import com.enterprisetransaction.enums.TransactionType;
 

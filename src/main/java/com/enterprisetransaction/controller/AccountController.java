@@ -5,6 +5,7 @@ import com.enterprisetransaction.dto.TransferRequestDto;
 import com.enterprisetransaction.dto.UserDto;
 import com.enterprisetransaction.dto.WithdrawRequestDto;
 import com.enterprisetransaction.entity.Transaction;
+import com.enterprisetransaction.service.AccountService;
 import com.enterprisetransaction.serviceimpl.AccountServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import java.util.List;
 @RequestMapping("/api/v1/account")
 public class AccountController {
     @Autowired
-    private AccountServiceImpl service;
+    private AccountService service;
 
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody UserDto dto) {
@@ -33,7 +34,7 @@ public class AccountController {
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<String> withdraw(@RequestBody @Valid WithdrawRequestDto req){
+    public ResponseEntity<String> withdraw(@RequestBody @Valid WithdrawRequestDto req) {
         service.withdraw(req);
         return ResponseEntity.ok("Withdrawn");
     }
@@ -42,11 +43,6 @@ public class AccountController {
     public ResponseEntity<String> transfer(@RequestBody TransferRequestDto req) {
         service.transfer(req);
         return ResponseEntity.ok("Transferred");
-    }
-
-    @GetMapping("/history/{id}")
-    public List<Transaction> history(@PathVariable Long id) {
-        return service.getHistory(id);
     }
 
     @GetMapping("/balance/{id}")

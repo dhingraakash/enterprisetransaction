@@ -104,11 +104,4 @@ public class AccountServiceTest {
         Double balance = accountService.getBalance(1L);
         assertEquals(10000.0, balance);
     }
-
-    @Test
-    void testGetHistory() {
-        when(transactionDao.findByAccountId(1L)).thenReturn(List.of(new Transaction(), new Transaction()));
-        List<Transaction> history = accountService.getHistory(1L);
-        assertEquals(2, history.size());
-    }
 }

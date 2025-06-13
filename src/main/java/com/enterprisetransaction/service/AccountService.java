@@ -8,12 +8,16 @@ import com.enterprisetransaction.entity.Transaction;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public interface AccountService {
     Long createUserWithAccount(UserDto dto);
+
     void deposit(DepositRequestDto request);
+
     void withdraw(WithdrawRequestDto request);
+
     void transfer(TransferRequestDto request);
+
     Double getBalance(Long accountId);
-    List<Transaction> getHistory(Long accountId);
 }

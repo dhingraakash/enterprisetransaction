@@ -1,6 +1,6 @@
 package com.enterprisetransaction.serviceimpl;
 
-import com.enterprisetransaction.aspect.SaveTransaction;
+import com.enterprisetransaction.anotations.SaveTransaction;
 import com.enterprisetransaction.dto.*;
 import com.enterprisetransaction.entity.Account;
 import com.enterprisetransaction.entity.Transaction;
@@ -26,9 +26,14 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountDao accountDao;
 
-    @Autowired
-    private TransactionDao transactionDao;
 
+    /**
+     * Creates a new user and an associated account within a transactional context.
+     * Rolls back if any exception occurs to ensure data consistency.
+     *
+     * @param dto
+     * @return
+     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public Long createUserWithAccount(UserDto dto) {
@@ -39,6 +44,12 @@ public class AccountServiceImpl implements AccountService {
         return acc.getId();
     }
 
+    /**
+     * Deposits the specified amount into the given account.
+     * Ensures account validation and updates the balance within a transaction.
+     *
+     * @param request
+     */
     @Override
     @SaveTransaction(type = TransactionType.DEPOSIT)
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
@@ -50,16 +61,18 @@ public class AccountServiceImpl implements AccountService {
         accountDao.update(acc);
     }
 
+    /**
+     * Withdraws the specified amount from the given account.
+     * Validates account existence and balance before debiting.
+     * Executes in a new transaction with READ_COMMITTED isolation.
+     *
+     * @param request
+     */
     @Override
     @SaveTransaction(type = TransactionType.WITHDRAWAL)
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void withdraw(WithdrawRequestDto request) {
         Account acc = accountDao.findById(request.getFromAccountId());
-        try {
-            Thread.sleep(5000);
-        }catch (InterruptedException ex){
-
-        }
         Helper.validateAccount(acc, request.getFromAccountId());
         Helper.validateSufficientBalance(acc, request.getAmount());
 
@@ -67,6 +80,13 @@ public class AccountServiceImpl implements AccountService {
         accountDao.update(acc);
     }
 
+    /**
+     * Transfers a specified amount from one account to another.
+     * Performs withdrawal and deposit in a single transaction to ensure consistency.
+     * Uses REPEATABLE_READ isolation to prevent non-repeatable reads during transfer.
+     *
+     * @param request
+     */
     @Override
     @SaveTransaction(type = TransactionType.TRANSFER)
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -75,18 +95,19 @@ public class AccountServiceImpl implements AccountService {
         deposit(RequestMapper.toDepositRequest(request));
     }
 
+    /**
+     * Retrieves the current balance of the specified account.
+     * Use Supports propagation as it's a read-only operation.
+     *
+     * @param accountId
+     * @return
+     */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
     public Double getBalance(Long accountId) {
         Account acc = accountDao.findById(accountId);
         Helper.validateAccount(acc, accountId);
         return acc.getBalance();
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public List<Transaction> getHistory(Long accountId) {
-        return transactionDao.findByAccountId(accountId);
     }
 
 }

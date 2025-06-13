@@ -1,5 +1,6 @@
 package com.enterprisetransaction.aspect;
 
+import com.enterprisetransaction.anotations.SaveTransaction;
 import com.enterprisetransaction.dto.DepositRequestDto;
 import com.enterprisetransaction.dto.RequestMapper;
 import com.enterprisetransaction.dto.TransferRequestDto;
@@ -19,7 +20,7 @@ public class TransactionAspect {
     @Autowired
     private TransactionService logService;
 
-    @AfterReturning("@annotation(com.enterprisetransaction.aspect.SaveTransaction)")
+    @AfterReturning("@annotation(com.enterprisetransaction.anotations.SaveTransaction)")
     public void saveTransactionAfterMethod(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         SaveTransaction annotation = signature.getMethod().getAnnotation(SaveTransaction.class);
