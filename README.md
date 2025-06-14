@@ -79,6 +79,7 @@ POST /api/v1/account/transfer
   "amount": 1000.0
 }
 
+##
 Transaction APIs
 Method	Endpoint	Description
 GET	/api/v1/transaction/history/{id}	Get all transactions for account
