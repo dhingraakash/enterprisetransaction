@@ -21,23 +21,23 @@ public class TransactionAspect {
     private TransactionService logService;
 
     @AfterReturning("@annotation(com.enterprisetransaction.anotations.SaveTransaction)")
-    public void saveTransactionAfterMethod(JoinPoint joinPoint) {
+    public void logTransaction(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         SaveTransaction annotation = signature.getMethod().getAnnotation(SaveTransaction.class);
         TransactionType type = annotation.type();
 
-        for (Object arg : joinPoint.getArgs()) {
-            if (arg instanceof DepositRequestDto dto) {
-                logService.logDeposit(dto, type);
-            } else if (arg instanceof WithdrawRequestDto dto) {
-                logService.logWithdraw(dto, type);
+        Object[] args = joinPoint.getArgs();
+
+        for (Object arg : args) {
+            if (arg instanceof DepositRequestDto dto && type == TransactionType.DEPOSIT) {
+                logService.logDeposit(dto, TransactionType.DEPOSIT);
+            } else if (arg instanceof WithdrawRequestDto dto && type == TransactionType.WITHDRAWAL) {
+                logService.logWithdraw(dto, TransactionType.WITHDRAWAL);
+            } else if (arg instanceof TransferRequestDto dto && type == TransactionType.TRANSFER) {
+                // Log two entries: one for sender, one for receiver
+                logService.logWithdraw(RequestMapper.toWithdrawRequest(dto), TransactionType.WITHDRAWAL);
+                logService.logDeposit(RequestMapper.toDepositRequest(dto), TransactionType.DEPOSIT);
             }
         }
-    }
-
-    @AfterReturning("execution(* com.enterprisetransaction.service.AccountService.transfer(..)) && args(request)")
-    public void logTransferTransactions(TransferRequestDto request) {
-        logService.logWithdraw(RequestMapper.toWithdrawRequest(request), TransactionType.WITHDRAWAL);
-        logService.logDeposit(RequestMapper.toDepositRequest(request), TransactionType.DEPOSIT);
     }
 }

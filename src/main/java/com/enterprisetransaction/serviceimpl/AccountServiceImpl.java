@@ -70,7 +70,7 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     @SaveTransaction(type = TransactionType.WITHDRAWAL)
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void withdraw(WithdrawRequestDto request) {
         Account acc = accountDao.findById(request.getFromAccountId());
         Helper.validateAccount(acc, request.getFromAccountId());
@@ -91,8 +91,18 @@ public class AccountServiceImpl implements AccountService {
     @SaveTransaction(type = TransactionType.TRANSFER)
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
     public void transfer(TransferRequestDto request) {
-        withdraw(RequestMapper.toWithdrawRequest(request));
-        deposit(RequestMapper.toDepositRequest(request));
+        Account from = accountDao.findById(request.getFromAccountId());
+        Account to = accountDao.findById(request.getToAccountId());
+
+        Helper.validateAccount(from, request.getFromAccountId());
+        Helper.validateAccount(to, request.getToAccountId());
+        Helper.validateSufficientBalance(from, request.getAmount());
+
+        Helper.debit(from, request.getAmount());
+        Helper.credit(to, request.getAmount());
+
+        accountDao.update(from);
+        accountDao.update(to);
     }
 
     /**
@@ -109,5 +119,4 @@ public class AccountServiceImpl implements AccountService {
         Helper.validateAccount(acc, accountId);
         return acc.getBalance();
     }
-
 }
