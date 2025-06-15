@@ -54,24 +54,25 @@ Account APIs
 
 ### 🔄 Sample Request Payloads
 
-#### Create User + Account
+✅ Create User + Account
 POST /api/v1/account/create
+
 {
   "name": "john",
   "email": "john@example.com",
   "accountType": "SAVINGS",
   "balance": 10000.0
 }
-
-Deposit Funds
+💰 Deposit Funds
 POST /api/v1/account/deposit
+
 {
   "toAccountId": 1,
   "amount": 5000.0
 }
-
-Transfer Funds
+🔁 Transfer Funds
 POST /api/v1/account/transfer
+
 {
   "fromAccountId": 1,
   "toAccountId": 2,
