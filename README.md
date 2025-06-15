@@ -55,7 +55,6 @@ Account APIs
 ### 🔄 Sample Request Payloads
 
 #### Create User + Account
-```json
 POST /api/v1/account/create
 {
   "name": "john",
