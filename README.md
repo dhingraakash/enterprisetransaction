@@ -79,8 +79,7 @@ POST /api/v1/account/transfer
   "amount": 1000.0
 }
 
-##
-Transaction APIs
+📄 Transaction APIs
 Method	Endpoint	Description
 GET	/api/v1/transaction/history/{id}	Get all transactions for account
 GET	/api/v1/transaction/summary	Get all transaction summaries
@@ -101,3 +100,5 @@ mvn clean install
 
 Run the Spring Boot application
 mvn spring-boot:run
+
+Swagger UI : http://localhost:8080/swagger-ui/index.html 
