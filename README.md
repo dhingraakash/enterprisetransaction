@@ -55,6 +55,7 @@ Account APIs
 ### 🔄 Sample Request Payloads
 
 ✅ Create User + Account
+```json
 POST /api/v1/account/create
 
 {
@@ -78,6 +79,7 @@ POST /api/v1/account/transfer
   "toAccountId": 2,
   "amount": 1000.0
 }
+```
 
 📄 Transaction APIs
 Method	Endpoint	Description
