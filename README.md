@@ -81,26 +81,32 @@ POST /api/v1/account/transfer
 }
 ```
 
-📄 Transaction APIs
-Method	Endpoint	Description
-GET	/api/v1/transaction/history/{id}	Get all transactions for account
-GET	/api/v1/transaction/summary	Get all transaction summaries
+## 📄 Transaction APIs
 
+| Method | Endpoint                                 | Description                          |
+|--------|------------------------------------------|--------------------------------------|
+| GET    | `/api/v1/transaction/history/{id}`       | Get all transactions for account     |
+| GET    | `/api/v1/transaction/summary`            | Get all transaction summaries        |
 
-How to Run the Project Locally
-🔧 Prerequisites
-Java 17+
-Maven 3.x
+---
 
-🧪 Steps
-Clone the repository
-git clone https://github.com/your-username/enterprise-banking.git
-cd enterprise-banking
+## 🏃 How to Run the Project Locally
 
-Build the project using Maven
+### 🔧 Prerequisites
+- Java 17+
+- Maven 3.x
+
+### 🧪 Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/enterprise-banking.git
+   cd enterprise-banking
+
+Build the project using Maven:
 mvn clean install
 
-Run the Spring Boot application
+Run the Spring Boot application:
 mvn spring-boot:run
 
 Swagger UI : http://localhost:8080/swagger-ui/index.html 
